@@ -47,12 +47,7 @@ class albumController
 
     function insertarValoracionDeUnAlbum()
     {
-        // ARTISTA(id: int, nombre: string, premium: boolean)
-
-        // ALBUM(id: int, titulo: string, productor: string, genero: string,
-        // fechaLanzamiento: string, id_artista: int)
-
-        // VALORACION(id: int, estrellas: int, id_album: int,id_user: int)
+        //inicie la sesion y traigo el id del usuario por session 
         session_start();
         $id_user = $_SESSION['id'];
         $id_artista = $_POST['id_artista'];
@@ -60,11 +55,28 @@ class albumController
         $id_album = $_POST['id_album'];
 
         // Chequear que el usuario no haya valorado el artista anteriormente.
-        $valoracion = $this->valoracionModel->getValoracion($id_user);
-        $album = $this->albumModel->getAlbum($id_album);
-        $artista = $this->artistaModel->getArtista($id_artista);
-                  
+        if(empty($id_user) && empty($id_artista) && empty($estrellas) && empty($id_album)){
+            $this->view->error("no estan llegando todos los datos");
+        }else{
+            $album = $this->albumModel->getAlbum($id_artista);
+            // voy a buscar la valoracion por el id del usuario y el id del album
+            $valoraciones = $this->valoracionModel->getValoracion($album->id, $id_user);  
+            //si la valoracion es null, entonces no ha valorado el artista anteriormente
+            if ($valoraciones == null) {
+                // si no ha valorado el artista anteriormente, entonces se inserta la valoracion
+                $this->valoracionModel->insertarValoracion($estrellas, $id_album, $id_user);
+                $this->view->show("valoracion insertada");
+            } else {
+                if($valoraciones < $estrellas){
+                    $this->valoracionModel->reemplazarValoracion($estrellas, $id_album, $id_user);
+                    $this->view->show("valoracion reemplazada");
+                }
+            }
+        }
     }
+
+
+
 }
 
 class valoracionModel

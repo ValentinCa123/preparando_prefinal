@@ -28,7 +28,7 @@ class artistasController
         $this->albumModel = new albumModel();
     }
 
-    //   Correccion
+    // Correccion
     // Checkie que esten llegando todos los datos
     function showArtistas()
     {

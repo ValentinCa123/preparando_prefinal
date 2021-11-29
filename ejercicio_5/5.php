@@ -31,8 +31,9 @@ class valoracionesController
     }
 
     //el id del album esta llegando por get (supongo que el id se manda por anchor y pasa por el router asignado por la catedra y llega por $params[1])
-    public function showValoracionesDeUnAlbum($id_album)
+    public function showValoracionesDeUnAlbum($params = null)
     {
+        $id_album = $params[':id_album'];//accedo a los datos get por $params
         //voy a buscar el album por su id a la base de datos
         $album = $this->albumModel->getAlbum($id_album);
         //checkeo que exista un album con ese id
